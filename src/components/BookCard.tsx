@@ -21,7 +21,7 @@ export default function BookCard({ post }: Props) {
       <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col h-full">
 
         {/* 表紙画像 */}
-        <div className="relative w-full overflow-hidden" style={{ aspectRatio: "2/3" }}>
+        <div className="relative w-full overflow-hidden" style={{ aspectRatio: "1/1" }}>
           {showImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
