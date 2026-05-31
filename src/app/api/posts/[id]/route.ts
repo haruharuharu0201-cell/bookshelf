@@ -60,3 +60,42 @@ export async function DELETE(
 
   return Response.json({ success: true });
 }
+
+export async function PATCH(
+  request: NextRequest,
+  ctx: RouteContext<"/api/posts/[id]">
+) {
+  const { id } = await ctx.params;
+  const { nickname, review, learnings } = await request.json();
+
+  if (!nickname || !review) {
+    return Response.json({ error: "必須項目が不足しています" }, { status: 400 });
+  }
+
+  const { data: post, error: fetchError } = await supabase
+    .from("posts")
+    .select("nickname")
+    .eq("id", id)
+    .single();
+
+  if (fetchError || !post) {
+    return Response.json({ error: "投稿が見つかりません" }, { status: 404 });
+  }
+
+  if (post.nickname !== nickname) {
+    return Response.json({ error: "編集できるのは投稿者本人のみです" }, { status: 403 });
+  }
+
+  const { data, error } = await supabase
+    .from("posts")
+    .update({ review, learnings: learnings || null })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+
+  return Response.json({ post: data });
+}

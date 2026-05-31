@@ -7,6 +7,7 @@ import { Comment } from "@/lib/types";
 import CommentSection from "@/components/CommentSection";
 import LikeButton from "@/components/LikeButton";
 import DeleteButton from "@/components/DeleteButton";
+import EditButton from "@/components/EditButton";
 
 async function getPost(id: string) {
   const { data, error } = await supabase
@@ -115,7 +116,10 @@ export default async function PostDetailPage({
 
         <div className="flex items-center justify-between">
           <LikeButton postId={post.id} initialCount={post.likes_count} />
-          <DeleteButton postId={post.id} postNickname={post.nickname} />
+          <div className="flex items-center gap-2">
+            <EditButton postId={post.id} postNickname={post.nickname} />
+            <DeleteButton postId={post.id} postNickname={post.nickname} />
+          </div>
         </div>
       </div>
 
