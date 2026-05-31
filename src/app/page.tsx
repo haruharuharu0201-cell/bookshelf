@@ -25,13 +25,12 @@ export default async function HomePage() {
 
   return (
     <div>
-      <div className="mb-8 flex items-end justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">新着の本</h1>
-          <p className="text-gray-500 text-sm">
-            みんなで <span className="font-bold text-amber-700">{posts.length}</span> 冊の本をシェア中
-          </p>
-        </div>
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">新着の本</h1>
+        <p className="text-gray-500" style={{ fontSize: "15px" }}>
+          みんなで <span className="font-bold text-amber-700">{posts.length}</span> 冊の本をシェア中
+        </p>
+        <div className="mt-4 h-px bg-gray-200" />
       </div>
       <BookGrid
         posts={posts}
