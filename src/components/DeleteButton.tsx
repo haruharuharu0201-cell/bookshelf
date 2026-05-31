@@ -10,24 +10,28 @@ type Props = {
 
 export default function DeleteButton({ postId, postNickname }: Props) {
   const router = useRouter();
-  const [myNickname, setMyNickname] = useState<string | null>(null);
+  const [canDelete, setCanDelete] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    setMyNickname(localStorage.getItem("bookshelf_nickname"));
-  }, []);
+    const nickname = localStorage.getItem("bookshelf_nickname");
+    const adminPassword = localStorage.getItem("bookshelf_admin_password");
+    setCanDelete(nickname === postNickname || !!adminPassword);
+  }, [postNickname]);
 
-  // 投稿者本人でなければ表示しない
-  if (!myNickname || myNickname !== postNickname) return null;
+  if (!canDelete) return null;
 
   const handleDelete = async () => {
     setDeleting(true);
+    const nickname = localStorage.getItem("bookshelf_nickname") || postNickname;
+    const adminPassword = localStorage.getItem("bookshelf_admin_password") || undefined;
+
     try {
       const res = await fetch(`/api/posts/${postId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nickname: myNickname }),
+        body: JSON.stringify({ nickname, adminPassword }),
       });
 
       if (!res.ok) {

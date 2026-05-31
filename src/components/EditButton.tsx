@@ -10,14 +10,15 @@ type Props = {
 
 export default function EditButton({ postId, postNickname }: Props) {
   const router = useRouter();
-  const [isOwner, setIsOwner] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("bookshelf_nickname");
-    setIsOwner(saved === postNickname);
+    const nickname = localStorage.getItem("bookshelf_nickname");
+    const adminPassword = localStorage.getItem("bookshelf_admin_password");
+    setCanEdit(nickname === postNickname || !!adminPassword);
   }, [postNickname]);
 
-  if (!isOwner) return null;
+  if (!canEdit) return null;
 
   return (
     <button

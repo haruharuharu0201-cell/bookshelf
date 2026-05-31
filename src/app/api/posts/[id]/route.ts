@@ -31,13 +31,14 @@ export async function DELETE(
   ctx: RouteContext<"/api/posts/[id]">
 ) {
   const { id } = await ctx.params;
-  const { nickname } = await request.json();
+  const { nickname, adminPassword } = await request.json();
 
-  if (!nickname) {
+  const isAdmin = adminPassword && adminPassword === process.env.ADMIN_PASSWORD;
+
+  if (!nickname && !isAdmin) {
     return Response.json({ error: "ニックネームが必要です" }, { status: 400 });
   }
 
-  // 投稿者のニックネームと一致するか確認
   const { data: post, error: fetchError } = await supabase
     .from("posts")
     .select("nickname")
@@ -48,7 +49,7 @@ export async function DELETE(
     return Response.json({ error: "投稿が見つかりません" }, { status: 404 });
   }
 
-  if (post.nickname !== nickname) {
+  if (post.nickname !== nickname && !isAdmin) {
     return Response.json({ error: "削除できるのは投稿者本人のみです" }, { status: 403 });
   }
 
@@ -66,10 +67,12 @@ export async function PATCH(
   ctx: RouteContext<"/api/posts/[id]">
 ) {
   const { id } = await ctx.params;
-  const { nickname, review, learnings } = await request.json();
+  const { nickname, review, learnings, adminPassword } = await request.json();
 
-  if (!nickname || !review) {
-    return Response.json({ error: "必須項目が不足しています" }, { status: 400 });
+  const isAdmin = adminPassword && adminPassword === process.env.ADMIN_PASSWORD;
+
+  if (!review) {
+    return Response.json({ error: "感想は必須です" }, { status: 400 });
   }
 
   const { data: post, error: fetchError } = await supabase
@@ -82,7 +85,7 @@ export async function PATCH(
     return Response.json({ error: "投稿が見つかりません" }, { status: 404 });
   }
 
-  if (post.nickname !== nickname) {
+  if (post.nickname !== nickname && !isAdmin) {
     return Response.json({ error: "編集できるのは投稿者本人のみです" }, { status: 403 });
   }
 

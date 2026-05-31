@@ -21,8 +21,9 @@ export default function EditForm({ post }: { post: Post }) {
   const [authError, setAuthError] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("bookshelf_nickname");
-    if (!saved || saved !== post.nickname) {
+    const nickname = localStorage.getItem("bookshelf_nickname");
+    const adminPassword = localStorage.getItem("bookshelf_admin_password");
+    if (nickname !== post.nickname && !adminPassword) {
       setAuthError(true);
     }
   }, [post.nickname]);
@@ -42,12 +43,13 @@ export default function EditForm({ post }: { post: Post }) {
 
     setSubmitting(true);
     const nickname = localStorage.getItem("bookshelf_nickname");
+    const adminPassword = localStorage.getItem("bookshelf_admin_password") || undefined;
 
     try {
       const res = await fetch(`/api/posts/${post.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nickname, review: review.trim(), learnings: learnings.trim() }),
+        body: JSON.stringify({ nickname, review: review.trim(), learnings: learnings.trim(), adminPassword }),
       });
 
       if (!res.ok) {
